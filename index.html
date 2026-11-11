@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Keep Clone</title>
+<meta name="description" content="A simple notes app: create, colour, pin, archive and search notes.">
+<meta name="theme-color" content="#fbbc04">
+
+<!-- Favicon (built in, no extra file needed) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fbbc04'/%3E%3Cpath d='M32 12a14 14 0 0 0-8 25.5V43a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-5.5A14 14 0 0 0 32 12z' fill='white'/%3E%3Crect x='26' y='49' width='12' height='4' rx='2' fill='white'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#notesMain">Skip to notes</a>
+
+<!-- Top bar -->
+<header class="topbar" id="topbar">
+  <button type="button" class="icon-btn tip-below" id="menuBtn" data-tooltip="Main menu" aria-label="Main menu" aria-expanded="true" aria-controls="sidebar">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <a class="brand" href="#" id="brand" aria-label="Keep, go to notes">
+    <span class="brand-logo"><i class="bi bi-lightbulb-fill" aria-hidden="true"></i></span>
+    <span class="brand-name">Keep</span>
+  </a>
+
+  <form class="search" id="searchForm" role="search">
+    <i class="bi bi-search search-icon" aria-hidden="true"></i>
+    <label class="visually-hidden" for="searchInput">Search notes</label>
+    <input type="search" id="searchInput" placeholder="Search" autocomplete="off">
+    <button type="button" class="icon-btn tip-below" id="searchClear" data-tooltip="Clear search" aria-label="Clear search" hidden>
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </form>
+
+  <div class="topbar-actions">
+    <button type="button" class="icon-btn tip-below tip-end" id="layoutBtn" data-tooltip="List view" aria-label="Switch to list view">
+      <i class="bi bi-view-stacked" id="layoutIcon"></i>
+    </button>
+    <button type="button" class="icon-btn tip-below tip-end" id="themeBtn" data-tooltip="Dark mode" aria-label="Switch to dark mode">
+      <i class="bi bi-moon-stars" id="themeIcon"></i>
+    </button>
+    <span class="avatar" aria-hidden="true">KR</span>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- Side menu -->
+  <nav class="sidebar" id="sidebar" aria-label="Notes sections">
+    <button type="button" class="nav-link is-active" data-view="notes" aria-current="page">
+      <i class="bi bi-lightbulb" aria-hidden="true"></i><span>Notes</span>
+    </button>
+    <button type="button" class="nav-link" data-view="archive">
+      <i class="bi bi-archive" aria-hidden="true"></i><span>Archive</span>
+    </button>
+    <button type="button" class="nav-link" data-view="trash">
+      <i class="bi bi-trash3" aria-hidden="true"></i><span>Trash</span>
+    </button>
+  </nav>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Notes area -->
+  <main class="content" id="notesMain">
+    <h1 class="visually-hidden" id="viewTitle">Notes</h1>
+
+    <!-- Create a note -->
+    <section class="composer" id="composer" aria-label="Create a note">
+      <button type="button" class="composer-collapsed" id="composerCollapsed">Take a note...</button>
+
+      <div class="composer-open" id="composerOpen" data-color="default" hidden>
+        <div class="composer-head">
+          <input type="text" id="composerTitle" placeholder="Title" aria-label="Note title" maxlength="120" autocomplete="off">
+          <button type="button" class="icon-btn tip-below tip-end" id="composerPin" data-tooltip="Pin note" aria-label="Pin note" aria-pressed="false">
+            <i class="bi bi-pin-angle"></i>
+          </button>
+        </div>
+        <textarea id="composerBody" placeholder="Take a note..." aria-label="Note text" rows="1"></textarea>
+        <div class="composer-foot">
+          <div class="note-tools is-visible">
+            <button type="button" class="icon-btn tip-top" id="composerColorBtn" data-tooltip="Background options" aria-label="Background options"><i class="bi bi-palette"></i></button>
+            <button type="button" class="icon-btn tip-top" id="composerArchiveBtn" data-tooltip="Archive" aria-label="Archive note"><i class="bi bi-archive"></i></button>
+          </div>
+          <button type="button" class="text-btn" id="composerClose">Close</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trash message -->
+    <div class="trash-banner" id="trashBanner" hidden>
+      <span>Notes in Trash are deleted after 7 days.</span>
+      <button type="button" class="text-btn" id="emptyTrashBtn">Empty Trash</button>
+    </div>
+
+    <!-- Pinned notes -->
+    <section class="notes-section" id="pinnedSection" aria-labelledby="pinnedTitle" hidden>
+      <h2 class="section-title" id="pinnedTitle">Pinned</h2>
+      <div class="notes-grid" id="pinnedGrid"></div>
+    </section>
+
+    <!-- Other notes -->
+    <section class="notes-section" id="otherSection" aria-labelledby="otherTitle">
+      <h2 class="section-title" id="otherTitle" hidden>Others</h2>
+      <div class="notes-grid" id="notesGrid"></div>
+    </section>
+
+    <!-- Nothing to show -->
+    <div class="empty-state" id="emptyState" hidden>
+      <i class="bi bi-lightbulb" id="emptyIcon" aria-hidden="true"></i>
+      <p id="emptyText">Notes you add appear here</p>
+    </div>
+  </main>
+</div>
+
+<!-- Colour picker popup -->
+<div class="palette" id="palette" role="group" aria-label="Note colours" hidden></div>
+
+<!-- Edit note popup -->
+<div class="overlay" id="editOverlay" hidden>
+  <div class="modal-card" id="editCard" data-color="default" role="dialog" aria-modal="true" aria-label="Edit note">
+    <div class="modal-head">
+      <input type="text" id="editTitle" placeholder="Title" aria-label="Note title" maxlength="120" autocomplete="off">
+      <button type="button" class="icon-btn tip-below tip-end" id="editPin" data-tooltip="Pin note" aria-label="Pin note" aria-pressed="false">
+        <i class="bi bi-pin-angle"></i>
+      </button>
+    </div>
+    <textarea id="editBody" placeholder="Note" aria-label="Note text" rows="3"></textarea>
+    <div class="modal-foot">
+      <span class="edited" id="editEdited"></span>
+      <div class="note-tools is-visible">
+        <button type="button" class="icon-btn tip-top" id="editColorBtn" data-tooltip="Background options" aria-label="Background options"><i class="bi bi-palette"></i></button>
+        <button type="button" class="icon-btn tip-top" id="editArchiveBtn" data-tooltip="Archive" aria-label="Archive note"><i class="bi bi-archive"></i></button>
+        <button type="button" class="icon-btn tip-top" id="editTrashBtn" data-tooltip="Delete note" aria-label="Move note to Trash"><i class="bi bi-trash3"></i></button>
+      </div>
+      <button type="button" class="text-btn" id="editClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm popup -->
+<div class="overlay" id="confirmOverlay" hidden>
+  <div class="confirm-card" id="confirmCard" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+    <h2 id="confirmTitle">Delete note</h2>
+    <p id="confirmText">This note will be deleted forever.</p>
+    <div class="confirm-actions">
+      <button type="button" class="text-btn" id="confirmCancel">Cancel</button>
+      <button type="button" class="text-btn is-danger" id="confirmOk">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Undo message -->
+<div class="snackbar" id="snackbar" role="status" aria-live="polite" hidden>
+  <span id="snackbarText"></span>
+  <button type="button" class="snackbar-undo" id="snackbarUndo">Undo</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
