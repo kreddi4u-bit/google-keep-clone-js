@@ -1,13 +1,4 @@
-# Keep Clone
-
-A simple notes app inspired by Google Keep, built with plain HTML, CSS and JavaScript. No frameworks and no backend. Notes are saved in your browser with `localStorage`.
-
-## How to run it
-1. Put `index.html`, `style.css` and `script.js` together in one folder.
-2. Open the folder in VS Code and install the **Live Server** extension.
-3. Right-click `index.html` and choose **Open with Live Server**.
-
-There is no build step, so it also deploys by dragging the folder into Netlify, or by pushing it to GitHub Pages.
+Google Keep Clone (JavaScript) and how to run it.
 
 ## What it does
 - **Create notes:** click "Take a note...", add a title and text, then click Close (or click outside the box).
